@@ -42,10 +42,14 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request){
-        System.out.println(loginRequest.toString());
-        Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(
-                loginRequest.getEmail(), loginRequest.getPassword());
-        Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
+
+//        Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(
+//                loginRequest.getEmail(), loginRequest.getPassword());
+//        Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
+
+        Authentication authenticationRequest =
+                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getPassword());
+        Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
 
         //Add failure excetpio
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
