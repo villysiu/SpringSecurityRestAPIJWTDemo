@@ -40,7 +40,6 @@ public class JwtService {
                 .compact();
     }
 
-
     public Claims validateToken(String token) {
 
         try {
@@ -52,6 +51,7 @@ public class JwtService {
             return claims;
 
         } catch(JwtException e){
+// catch null, wrong token, expired token
             throw new JwtException(e.getMessage());
         }
 

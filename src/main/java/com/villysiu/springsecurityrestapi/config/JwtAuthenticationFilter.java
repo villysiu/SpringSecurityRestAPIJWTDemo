@@ -38,7 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String jwt = extractJwt(request);
-
             jwtService.validateToken(jwt);
             String userEmail = jwtService.extractEmail();
 
@@ -67,6 +66,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             return authHeader.substring(7);
         }
-        throw new JwtException("no JWT");
+        return null;
     }
 }
