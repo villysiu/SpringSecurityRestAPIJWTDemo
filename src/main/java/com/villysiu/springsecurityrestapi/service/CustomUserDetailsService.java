@@ -1,7 +1,8 @@
 package com.villysiu.springsecurityrestapi.service;
 
-import com.villysiu.springsecurityrestapi.model.User;
-import com.villysiu.springsecurityrestapi.repository.UserRepository;
+import com.villysiu.springsecurityrestapi.model.Account;
+import com.villysiu.springsecurityrestapi.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,24 +15,27 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Autowired
+    private  AccountRepository accountRepository;
+    public CustomUserDetailsService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(email + " not found." ));
 
-        Set<GrantedAuthority> authorities = user
+        Set<GrantedAuthority> authorities = account
                 .getRoles()
                 .stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
+                .map((role) -> new SimpleGrantedAuthority(role.getErole().name()))
+                .collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
+                account.getEmail(),
+                account.getPassword(),
                 authorities
         );
     }

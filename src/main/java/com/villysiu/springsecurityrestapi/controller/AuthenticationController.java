@@ -1,13 +1,19 @@
 package com.villysiu.springsecurityrestapi.controller;
 
+import com.villysiu.springsecurityrestapi.Dto.JwtTokenResponse;
 import com.villysiu.springsecurityrestapi.Dto.LoginRequest;
 import com.villysiu.springsecurityrestapi.Dto.SignupRequest;
+import com.villysiu.springsecurityrestapi.config.JwtAuthenticationFilter;
+import com.villysiu.springsecurityrestapi.model.Account;
+import com.villysiu.springsecurityrestapi.model.ERole;
 import com.villysiu.springsecurityrestapi.model.Role;
-import com.villysiu.springsecurityrestapi.model.User;
+import com.villysiu.springsecurityrestapi.repository.AccountRepository;
 import com.villysiu.springsecurityrestapi.repository.RoleRepository;
-import com.villysiu.springsecurityrestapi.repository.UserRepository;
+import com.villysiu.springsecurityrestapi.service.AuthenticationService;
+import com.villysiu.springsecurityrestapi.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,75 +27,53 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.Collections;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthenticationController {
 
     @Autowired
-    private  AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request){
-
-//        Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(
-//                loginRequest.getEmail(), loginRequest.getPassword());
-//        Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
-
-        Authentication authenticationRequest =
-                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getPassword());
-        Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
-
-        //Add failure excetpio
-        SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
-
-        HttpSession session = request.getSession();
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
-//    https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#servlet-authentication-unpwd-input
-//    @PostMapping("/login")
-//    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
-//        Authentication authenticationRequest =
-//                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.username(), loginRequest.password());
-//        Authentication authenticationResponse =
-//                this.authenticationManager.authenticate(authenticationRequest);
-//        // ...
-//    }
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+        try {
+            return new ResponseEntity<>(authenticationService.login(loginRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
+    }
 
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest, HttpServletRequest request){
-
-        // add check for email exists in DB
-        if(userRepository.existsByEmail(signupRequest.getEmail())){
-            return new ResponseEntity<>("Email already used!", HttpStatus.BAD_REQUEST);
+        try {
+            return new ResponseEntity<>(authenticationService.registerAccount(signupRequest), HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
 
-
-        // create user object
-        User user = new User();
-        user.setName(signupRequest.getName());
-        user.setEmail(signupRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-
-        Role role = roleRepository.findByName("ROLE_USER");
-        user.setRoles(Set.of(role));
-
-        userRepository.save(user);
-
-        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
-
     }
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication){
+//        System.out.println("logging out");
+//
+//        logoutHandler.logout(request, response, authentication);
+//
+//        request.getSession().removeAttribute("SPRING_SECURITY_CONTEXT");
+//        request.getSession().invalidate();
+//        SecurityContextHolder.clearContext();
+//        return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
+//
+//    }
 }

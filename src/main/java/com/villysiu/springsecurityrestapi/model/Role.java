@@ -1,23 +1,21 @@
 package com.villysiu.springsecurityrestapi.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.IdGeneratorType;
 
 @Entity
-@Table
+@Data@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private ERole erole = ERole.ROLE_USER;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public Role(ERole erole) {
+        this.erole = erole;
     }
 }

@@ -1,0 +1,13 @@
+https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html#oauth2resourceserver-jwt-boot-algorithm
+
+Given a well-formed JWT, Resource Server will:
+
+Validate its signature against a public key obtained from the jwks_url endpoint during startup and matched against the JWT
+
+Validate the JWT’s exp and nbf timestamps and the JWT’s iss claim, and
+
+Map each scope to an authority with the prefix SCOPE_.
+
+The resulting Authentication#getPrincipal, by default, is a Spring Security Jwt object, and Authentication#getName maps to the JWT’s sub property, if one is present.
+
+https://auth0.com/docs/secure/tokens/json-web-tokens
