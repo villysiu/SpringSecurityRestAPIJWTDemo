@@ -62,7 +62,7 @@ public class JwtService {
         return null;
 
     }
-    public void validateToken(String token) {
+    public void validateToken(String token) throws JwtException {
 
         try {
             claims = Jwts.parser()
@@ -71,6 +71,7 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
 //            return claims;
+            System.out.println("in validateToken?");
 
         } catch(JwtException e){
 // catch null, wrong token, expired token

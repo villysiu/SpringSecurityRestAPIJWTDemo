@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.IdGeneratorType;
 
 @Entity
-@Data@NoArgsConstructor
+@Data
+@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

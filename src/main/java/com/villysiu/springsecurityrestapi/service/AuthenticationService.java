@@ -59,18 +59,16 @@ public class AuthenticationService {
         return userDetails.getUsername();
     }
     public void registerAccount(SignupRequest signupRequest){
-        System.out.println("sign up");
-        // add check for email exists in DB
+
         if(accountRepository.existsByEmail(signupRequest.getEmail())){
             throw new EntityExistsException("Email already used");
         }
 
-
         // create user object
         Account account = new Account(signupRequest.getName(), signupRequest.getEmail(), passwordEncoder.encode(signupRequest.getPassword()));
-        Role role = roleRepository.findByErole(ERole.ROLE_USER).orElse(
-                roleRepository.save( new Role(ERole.ROLE_USER))
-        );
+        Role role = roleRepository.findByErole(ERole.ROLE_USER).orElse(null);
+
+        System.out.println(role);
         account.setRoles(Collections.singleton(role));
         accountRepository.save(account);
 
