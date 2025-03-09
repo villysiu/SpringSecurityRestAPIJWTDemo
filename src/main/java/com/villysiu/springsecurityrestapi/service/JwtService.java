@@ -78,6 +78,12 @@ public class JwtService {
         }
 
     }
+    public void removeTokenFromCookie(HttpServletResponse response){
+        Cookie cookie = new Cookie("JWT", null);
+        cookie.setPath("/");
+
+        response.addCookie(cookie);
+    }
 
     private SecretKey getSignInKey() {
 //        SignatureAlgorithm.HS256, this.secret

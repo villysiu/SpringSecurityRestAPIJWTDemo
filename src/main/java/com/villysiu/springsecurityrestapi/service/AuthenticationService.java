@@ -10,6 +10,7 @@ import com.villysiu.springsecurityrestapi.repository.AccountRepository;
 import com.villysiu.springsecurityrestapi.repository.RoleRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,5 +80,8 @@ public class AuthenticationService {
         account.setRoles(Collections.singleton(role));
         accountRepository.save(account);
 
+    }
+    public void logoutUser(HttpServletResponse response){
+        jwtService.removeTokenFromCookie(response);
     }
 }

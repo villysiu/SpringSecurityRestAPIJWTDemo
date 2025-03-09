@@ -69,8 +69,8 @@ public class AuthenticationController {
 
     }
     @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser() {
-
+    public ResponseEntity<?> logoutUser(HttpServletResponse response) {
+        authenticationService.logoutUser(response);
         return new ResponseEntity("You've been signed out!", HttpStatus.OK);
     }
 }
