@@ -2,8 +2,6 @@ package com.villysiu.springsecurityrestapi.config;
 
 import com.villysiu.springsecurityrestapi.service.CustomUserDetailsService;
 import com.villysiu.springsecurityrestapi.service.JwtService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,14 +56,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-    private String extractJwt(HttpServletRequest request){
 
-        final String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader: " + authHeader);
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")){
-            return authHeader.substring(7);
-        }
-        return null;
-    }
 }

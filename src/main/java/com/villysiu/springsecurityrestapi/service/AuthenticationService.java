@@ -1,6 +1,5 @@
 package com.villysiu.springsecurityrestapi.service;
 
-import com.villysiu.springsecurityrestapi.Dto.JwtTokenResponse;
 import com.villysiu.springsecurityrestapi.Dto.LoginRequest;
 import com.villysiu.springsecurityrestapi.Dto.SignupRequest;
 import com.villysiu.springsecurityrestapi.model.Account;
@@ -9,13 +8,8 @@ import com.villysiu.springsecurityrestapi.model.Role;
 import com.villysiu.springsecurityrestapi.repository.AccountRepository;
 import com.villysiu.springsecurityrestapi.repository.RoleRepository;
 import jakarta.persistence.EntityExistsException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
