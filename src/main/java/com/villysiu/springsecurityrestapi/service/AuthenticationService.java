@@ -55,20 +55,8 @@ public class AuthenticationService {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
 
-        String jwt = jwtService.generateToken(loginRequest.getEmail());
-        System.out.println(jwt);
+        jwtService.generateToken(loginRequest.getEmail(), response);
 
-        Cookie cookie = new Cookie("JWT", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
-
-
-        //look up sending the token in response cookie to send in header
-        // or http session?
-//        JwtTokenResponse jwtTokenResponse = JwtTokenResponse.builder().token(jwt).build();
 
         UserDetails userDetails = (UserDetails) authenticationResponse.getPrincipal();
 

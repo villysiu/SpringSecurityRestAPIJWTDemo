@@ -28,7 +28,7 @@ public class JwtService {
 
     private Claims claims;
 
-    public String generateToken(String email){
+    public void generateToken(String email, HttpServletResponse response){
         /*
             generate token with jwts builder
             subject accepts string
@@ -36,12 +36,22 @@ public class JwtService {
             signWith accepts a secretKey
          */
 
-        return Jwts.builder()
+        String jwt = Jwts.builder()
                 .subject(email) //username here is indeed the email
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiresMinutes * 60 * 1000))
                 .signWith(getSignInKey())
                 .compact();
+
+        Cookie cookie = new Cookie("JWT", jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+        response.addCookie(cookie);
+
+
+
     }
 
     public String getJwtFromCookie(HttpServletRequest request){
