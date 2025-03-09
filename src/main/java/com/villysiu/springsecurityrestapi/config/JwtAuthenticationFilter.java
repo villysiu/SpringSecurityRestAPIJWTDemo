@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            String jwt = extractJwt(request);
+            String jwt = jwtService.getJwtFromCookie(request);
             jwtService.validateToken(jwt);
             String userEmail = jwtService.extractEmail();
 

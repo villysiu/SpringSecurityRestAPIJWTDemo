@@ -12,6 +12,7 @@ import com.villysiu.springsecurityrestapi.repository.RoleRepository;
 import com.villysiu.springsecurityrestapi.service.AuthenticationService;
 import com.villysiu.springsecurityrestapi.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,11 @@ public class AuthenticationController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response){
         try {
-            return new ResponseEntity<>(authenticationService.login(loginRequest), HttpStatus.OK);
+            String email = authenticationService.login(loginRequest, response);
+
+            return new ResponseEntity<>(email+" signed in", HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -57,23 +60,17 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest, HttpServletRequest request){
         try {
-            return new ResponseEntity<>(authenticationService.registerAccount(signupRequest), HttpStatus.CREATED);
+            authenticationService.registerAccount(signupRequest);
+            return new ResponseEntity<>("Account registered.", HttpStatus.CREATED);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
 
     }
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication){
-//        System.out.println("logging out");
-//
-//        logoutHandler.logout(request, response, authentication);
-//
-//        request.getSession().removeAttribute("SPRING_SECURITY_CONTEXT");
-//        request.getSession().invalidate();
-//        SecurityContextHolder.clearContext();
-//        return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
-//
-//    }
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser() {
+
+        return new ResponseEntity("You've been signed out!", HttpStatus.OK);
+    }
 }

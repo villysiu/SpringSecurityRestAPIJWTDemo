@@ -6,8 +6,12 @@ import io.jsonwebtoken.Jwts;
 
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -40,7 +44,15 @@ public class JwtService {
                 .compact();
     }
 
-    public Claims validateToken(String token) {
+    public String getJwtFromCookie(HttpServletRequest request){
+        Cookie cookie = WebUtils.getCookie(request, "JWT");
+        if(cookie != null){
+            return cookie.getValue();
+        }
+        return null;
+
+    }
+    public void validateToken(String token) {
 
         try {
             claims = Jwts.parser()
@@ -48,7 +60,7 @@ public class JwtService {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-            return claims;
+//            return claims;
 
         } catch(JwtException e){
 // catch null, wrong token, expired token

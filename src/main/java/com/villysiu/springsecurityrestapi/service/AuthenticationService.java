@@ -9,13 +9,17 @@ import com.villysiu.springsecurityrestapi.model.Role;
 import com.villysiu.springsecurityrestapi.repository.AccountRepository;
 import com.villysiu.springsecurityrestapi.repository.RoleRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +48,7 @@ public class AuthenticationService {
         this.accountRepository = accountRepository;
         this.jwtService = jwtService;
     }
-    public JwtTokenResponse login(LoginRequest loginRequest) {
+    public String login(LoginRequest loginRequest, HttpServletResponse response) {
 
         Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getPassword());
         Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
@@ -54,11 +58,24 @@ public class AuthenticationService {
         String jwt = jwtService.generateToken(loginRequest.getEmail());
         System.out.println(jwt);
 
+        Cookie cookie = new Cookie("JWT", jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60);
+        response.addCookie(cookie);
+
+
         //look up sending the token in response cookie to send in header
         // or http session?
-        return JwtTokenResponse.builder().token(jwt).build();
+//        JwtTokenResponse jwtTokenResponse = JwtTokenResponse.builder().token(jwt).build();
+
+        UserDetails userDetails = (UserDetails) authenticationResponse.getPrincipal();
+
+//        System.out.println("email: " + email);
+        return userDetails.getUsername();
     }
-    public Account registerAccount(SignupRequest signupRequest){
+    public void registerAccount(SignupRequest signupRequest){
         System.out.println("sign up");
         // add check for email exists in DB
         if(accountRepository.existsByEmail(signupRequest.getEmail())){
@@ -72,9 +89,7 @@ public class AuthenticationService {
                 roleRepository.save( new Role(ERole.ROLE_USER))
         );
         account.setRoles(Collections.singleton(role));
-
-        return accountRepository.save(account);
-
+        accountRepository.save(account);
 
     }
 }
