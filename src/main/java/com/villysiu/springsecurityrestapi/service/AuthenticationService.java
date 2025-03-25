@@ -22,26 +22,19 @@ import java.util.Collections;
 
 @Service
 public class AuthenticationService {
-    @Autowired
+
     private final AuthenticationManager authenticationManager;
-
-    @Autowired
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
     private final AccountRepository accountRepository;
-
-
-    @Autowired
     private final JwtService jwtService;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, AccountRepository accountRepository,  JwtService jwtService) {
+    public AuthenticationService(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, AccountRepository accountRepository, JwtService jwtService, RoleRepository roleRepository) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.accountRepository = accountRepository;
         this.jwtService = jwtService;
+        this.roleRepository = roleRepository;
     }
     public String login(LoginRequest loginRequest, HttpServletResponse response) {
 

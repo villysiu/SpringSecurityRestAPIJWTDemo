@@ -24,7 +24,6 @@ import java.util.Collections;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    @Autowired
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(AuthenticationService authenticationService) {
