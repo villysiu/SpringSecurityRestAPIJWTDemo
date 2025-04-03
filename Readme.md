@@ -1,6 +1,7 @@
 # Authentication with Spring Security and JSON Web Token (JWT)
 ![](https://raw.githubusercontent.com/villysiu/SpringSecurityRestAPIJWTDemo/refs/heads/main/src/main/resources/static/images/1_4kmMGfCuHJPtB4t0s5l30Q.webp)
-In this tutorial, we are building an authentication REST API Spring boot project with Spring Security and Jwt token.
+
+[![Authentication by Spring Security adn JWT](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fyoutube.com%2Fshorts%2F2e5bfzWMsWo)](https://youtube.com/shorts/2e5bfzWMsWo)
 
 In this tutorial, we are building an authentication REST API Spring boot project with Spring Security and Jwt token.
 This is based on my previous post Java Springboot signup/login Rest API. Instead of persisting the authenticated user into a HttpSession, we create a JSON Web Token with the authenticated user's email and persist it in a cookie in the response header. So everytime a request being sent, the cookie will be sent along, and jwt token will be extracted and validated, to see if user has authority to visit the link.
